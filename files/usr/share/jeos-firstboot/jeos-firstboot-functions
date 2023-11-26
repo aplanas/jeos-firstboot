@@ -47,14 +47,17 @@ call_module() {
 	local module_func="$2"
 	module_function="${module}_${module_func}"
 	[ "$(type -t -- "${module_function}")" = "function" ] || return 1
+	echo "XXXX Calling ${module_function}" > /dev/ttyS0
 	"${module_function}" && true # To not trigger errexit
 	ret=$?
+	echo "XXXX ret $ret" > /dev/ttyS0
 	[ $ret -eq 0 ] || return $ret
 }
 
 call_module_hook() {
         local hook="$1"
         for module in "${modules[@]}"; do
+	    	echo "XXXX ITER to ${module} ${hook}" > /dev/ttyS0
 		call_module ${module} ${hook} || continue
         done
         return 0
